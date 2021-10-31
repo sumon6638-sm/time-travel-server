@@ -101,6 +101,24 @@ async function run() {
             res.json(result);
         })
 
+        // UPDATE API
+        app.put('/booked/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const updatedAction = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: updatedAction.status
+                },
+            };
+            const result = await bookedCollection.updateOne(filter, updateDoc, options)
+
+            // console.log(req);
+            res.json(result);
+        })
+
     }
     finally {
         // await client.close();
