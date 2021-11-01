@@ -100,22 +100,26 @@ async function run() {
             res.send('hitting post')
         })
 
-        // DELETE API
-        app.delete('/packages/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await packagesCollection.deleteOne(query);
-            res.json(result);
-        })
-
-        app.delete('/booked/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await bookedCollection.deleteOne(query);
-            res.json(result);
-        })
-
         // UPDATE API
+        // Update Package
+        app.put('/packages/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(req);
+            const updatedAction = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updatedAction.name,
+                    price: updatedAction.price
+                },
+            };
+            const result = await packagesCollection.updateOne(filter, updateDoc, options)
+
+            // console.log(req);
+            res.json(result);
+        })
+
         app.put('/booked/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id);
@@ -133,21 +137,18 @@ async function run() {
             res.json(result);
         })
 
-        // Update Package
-        app.put('/package/:id', async (req, res) => {
+        // DELETE API
+        app.delete('/packages/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id);
-            const updatedAction = req.body;
-            const filter = { _id: ObjectId(id) };
-            const options = { upsert: true };
-            const updateDoc = {
-                $set: {
-                    status: updatedAction.status
-                },
-            };
-            const result = await bookedCollection.updateOne(filter, updateDoc, options)
+            const query = { _id: ObjectId(id) };
+            const result = await packagesCollection.deleteOne(query);
+            res.json(result);
+        })
 
-            // console.log(req);
+        app.delete('/booked/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookedCollection.deleteOne(query);
             res.json(result);
         })
 
