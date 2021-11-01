@@ -25,12 +25,26 @@ async function run() {
         const database = client.db('travelPackage')
         const packagesCollection = database.collection('packages');
         const bookedCollection = database.collection('booked');
+        const travellersCollection = database.collection('travellers');
+        const blogsCollection = database.collection('blogs');
 
         // GET API -- get all data from my db
         app.get('/packages', async (req, res) => {
             const cursor = packagesCollection.find({});
             const packages = await cursor.toArray();
             res.send(packages)
+        });
+
+        app.get('/travellers', async (req, res) => {
+            const cursor = travellersCollection.find({});
+            const travellers = await cursor.toArray();
+            res.send(travellers)
+        });
+
+        app.get('/blogs', async (req, res) => {
+            const cursor = blogsCollection.find({});
+            const blogs = await cursor.toArray();
+            res.send(blogs)
         });
 
         // GET Single Package
@@ -103,6 +117,24 @@ async function run() {
 
         // UPDATE API
         app.put('/booked/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const updatedAction = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: updatedAction.status
+                },
+            };
+            const result = await bookedCollection.updateOne(filter, updateDoc, options)
+
+            // console.log(req);
+            res.json(result);
+        })
+
+        // Update Package
+        app.put('/package/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id);
             const updatedAction = req.body;
